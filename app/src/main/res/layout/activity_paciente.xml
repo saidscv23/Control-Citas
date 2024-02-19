@@ -36,11 +36,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="51dp"
-        android:layout_marginBottom="662dp"
+        android:layout_marginEnd="173dp"
+        android:layout_marginBottom="670dp"
         android:fontFamily="sans-serif-black"
         android:text="CONSULTAR CITAS"
-        android:textSize="34sp" />
+        android:textSize="24sp" />
 
     <ScrollView
         android:layout_width="363dp"
@@ -64,4 +64,15 @@
                 android:textSize="18sp" />
         </LinearLayout>
     </ScrollView>
+
+    <Button
+        android:id="@+id/brn_salir"
+        android:layout_width="120dp"
+        android:layout_height="36dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="27dp"
+        android:layout_marginBottom="666dp"
+        android:backgroundTint="#8F0823"
+        android:text="SALIR" />
 </RelativeLayout>

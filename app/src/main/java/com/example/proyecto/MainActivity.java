@@ -1,8 +1,14 @@
 package com.example.proyecto;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -22,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText editTextContraseña;
     private Button buttonIngresar;
 
+    private static final String CHANNEL_ID="canal";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         editTextContraseña = findViewById(R.id.editTextTextPassword);
         buttonIngresar = findViewById(R.id.button);
 
+
         buttonIngresar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -39,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
                 String contraseñaEncriptada = MD5.encrypt(contraseña);
 
 
-                String url = "http://192.168.101.8/WS/webapi.php?op=validar&usu=" + usuario + "&cla=" + contraseñaEncriptada;
+                String url = "http://192.168.101.6/WS/webapi.php?op=validar&usu=" + usuario + "&cla=" + contraseñaEncriptada;
                 new ValidarLoginTask().execute(url);
             }
         });
@@ -74,11 +83,16 @@ public class MainActivity extends AppCompatActivity {
                 String resultadoAutenticacion = jsonArray.getString(1);
 
                 if (resultadoAutenticacion.equals("0") && rol.equals("Paciente")) {
+                    // Generar la notificación antes de iniciar la actividad Paciente
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        generarNoticacionCanal();
+                    } else {
+                        generarNoticacionSinCanal();
+                    }
 
                     Intent intent = new Intent(MainActivity.this, Paciente.class);
                     startActivity(intent);
                 } else {
-
                     Toast.makeText(MainActivity.this, "Credenciales incorrectas", Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {
@@ -88,5 +102,36 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+
+
+
     }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void generarNoticacionCanal(){
+        NotificationChannel channel=new NotificationChannel(CHANNEL_ID,"NEW", NotificationManager.IMPORTANCE_DEFAULT);
+        NotificationManager manager=(NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        manager.createNotificationChannel(channel);
+        generarNoticacionSinCanal();
+    }
+
+
+    public void generarNoticacionSinCanal() {
+        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        if (manager != null) {
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+                    .setSmallIcon(R.drawable.descarga)
+                    .setContentTitle("CITAS")
+                    .setContentText("Notificación Básica")
+                    .setStyle(new NotificationCompat.BigTextStyle().bigText("Acceso correcto a mirar citas"))
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setAutoCancel(true);
+
+            manager.notify(0, builder.build());
+        }
+    }
+
+
 }

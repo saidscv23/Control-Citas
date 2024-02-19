@@ -2,6 +2,8 @@ package com.example.proyecto;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -31,7 +33,7 @@ public class Paciente extends AppCompatActivity {
 
     private EditText txtCedula;
     private TextView ingresosTextView;
-    private Button btnConsultar;
+    private Button btnConsultar , btnSalir;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +44,7 @@ public class Paciente extends AppCompatActivity {
         txtCedula = findViewById(R.id.txtingreso);
         ingresosTextView = findViewById(R.id.ingresos);
         btnConsultar = findViewById(R.id.button);
-
+        btnSalir = findViewById(R.id.brn_salir);
 
         btnConsultar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,9 +52,22 @@ public class Paciente extends AppCompatActivity {
 
                 String cedula = txtCedula.getText().toString().trim();
 
-                new ConsultarRegistroTask().execute("http://192.168.101.8/WS/webapi.php?op=tabla&ced=" + cedula);
+                new ConsultarRegistroTask().execute("http://192.168.101.6/WS/webapi.php?op=tabla&ced=" + cedula);
+            }
+
+        });
+
+
+        btnSalir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Cerrar sesión y regresar a MainActivity
+                Intent intent = new Intent(Paciente.this, MainActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
+
     }
 
     private class ConsultarRegistroTask extends AsyncTask<String, Void, String> {
